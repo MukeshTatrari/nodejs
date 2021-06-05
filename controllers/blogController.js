@@ -1,14 +1,14 @@
 const Blog = require("../models/blog");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const blog_index = (req, res) => {
   Blog.find()
     .sort({ createdAt: -1 })
     .then((result) => {
-      res.render("index", { blogs: result, title: "All blogs" });
+      res.render("blogs/index", { blogs: result, title: "All blogs" });
     })
     .catch((err) => {
-      console.log(err);
+      res.render("404", { title: "Blog not found" });
     });
 };
 
@@ -16,15 +16,19 @@ const blog_details = (req, res) => {
   const id = req.params.id;
   Blog.findById(id)
     .then((result) => {
-      res.render("details", { blog: result, title: "Blog Details" });
+      if (result) {
+        res.render("blogs/details", { blog: result, title: "Blog Details" });
+      } else {
+        res.render("404", { title: "Blog not found" });
+      }
     })
     .catch((err) => {
-      console.log(err);
+      res.render("404", { title: "Blog not found" });
     });
 };
 
 const blog_create_get = (req, res) => {
-  res.render("create", { title: "Create a new blog" });
+  res.render("blogs/create", { title: "Create a new blog" });
 };
 
 const blog_create_post = (req, res) => {
@@ -39,7 +43,7 @@ const blog_create_post = (req, res) => {
       res.redirect("/");
     })
     .catch((err) => {
-      console.log(err);
+      res.render("404", { title: "Blog not found" });
     });
 };
 
@@ -50,7 +54,7 @@ const blog_delete = (req, res) => {
       res.json({ redirect: "/blogs" });
     })
     .catch((err) => {
-      console.log(err);
+      res.render("404", { title: "Blog not found" });
     });
 };
 
